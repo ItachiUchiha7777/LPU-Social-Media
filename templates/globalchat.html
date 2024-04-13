@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Chat</title>
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Socket.IO -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.1/socket.io.js"></script>
+</head>
+
+<body class="bg-gray-100 dark:bg-gray-900">
+    <div class="container mx-auto mt-8">
+        <h3>Welcome to Lpu Global</h3>
+    </div>
+
+    <!-- Chat Interface -->
+    <div class="container mx-auto mt-8">
+        <div class="flex flex-col h-[400px] rounded-lg border border-gray-200 dark:border-gray-800 overflow-y-auto">
+            <div class="flex-1 grid px-4 py-4 gap-4" id="chat">
+                <!-- Messages will be inserted here dynamically -->
+            </div>
+            <div class="border-t border-gray-200 dark:border-gray-800">
+                <div class="p-4 flex items-center gap-4">
+                    <input id="message-input"
+                        class="flex h-10 w-full rounded-md border border-gray-300 bg-white dark:bg-gray-800 px-3 py-2 text-sm focus:outline-none"
+                        placeholder="Type a message">
+                    <button id="send-button"
+                        class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 px-4 py-2 focus:outline-none">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        var socket = io();
+
+        function sendMessage() {
+            var messageInput = document.getElementById('message-input');
+            var messageText = messageInput.value.trim();
+            if (messageText !== '') {
+                var message = {
+                    sender: '{{ session["name"] }}', // Get session name from Flask session
+                    text: messageText,
+                    timestamp: new Date().toLocaleString()
+                };
+                socket.emit('message', message);
+                messageInput.value = '';
+            }
+        }
+
+        socket.on('message', function (message) {
+            var chatDiv = document.getElementById('chat');
+            var messageDiv = document.createElement('div');
+            var senderClass = message.sender === '{{ session["name"] }}' ? 'text-primary-500' : 'text-accent-500'; // Assuming primary color for current user and accent color for others
+            messageDiv.className = 'flex flex-col';
+            messageDiv.innerHTML = `
+                <div class="rounded-xl ${message.sender === '{{ session["name"] }}' ? 'bg-gray-100' : 'bg-gray-200'} dark:${message.sender === '{{ session["name"] }}' ? 'bg-gray-800' : 'bg-gray-700'} p-4">
+                    <div class="text-sm font-semibold ${senderClass}">${message.sender}</div>
+                    <div>${message.text}</div>
+                    <div class="text-sm text-gray-500 dark:text-gray-400">${message.timestamp}</div>
+                </div>
+            `;
+
+           
+            chatDiv.insertBefore(messageDiv, chatDiv.childNodes[chatDiv.childNodes.length - 1]);
+
+            chatDiv.scrollTop = chatDiv.scrollHeight; 
+        });
+
+        document.getElementById('send-button').addEventListener('click', sendMessage);
+
+        document.getElementById('message-input').addEventListener('keypress', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); 
+                sendMessage();
+            }
+        });
+
+        function scrollToBottom() {
+            window.scrollTo(0, document.body.scrollHeight);
+        }
+
+        
+        socket.on('message', function (message) {
+            
+
+           
+            scrollToBottom();
+        });
+
+       
+        window.onload = function () {
+            scrollToBottom();
+        };
+    </script>
+</body>
+
+</html>
+
+
+{%endblock%}

@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block content %}
+<title>Upload Page</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f2f5;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        margin-top: 0;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .form-group input[type="file"] {
+        display: block;
+    }
+
+    .form-group input[type="submit"] {
+        padding: 10px 20px;
+        background-color: #333;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .form-group input[type="submit"]:hover {
+        background-color: #555;
+    }
+
+    #uploaded-image {
+        height: auto;
+        width: 50%;
+        border-radius: 15%;
+
+        padding: 50px
+    }
+</style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Upload Photo</h1>
+        {% if session.name %}
+        You are Register {{ session.name }} <a href="/logout">logout</a>.
+        {% else %}
+        You are not Register. <a href="{{ url_for('login') }}">login</a>.
+        {% endif %}
+        <form action="/upload" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="photo" id="photolabel">Choose Photo:</label>
+                <input type="file" name="photo" id="photo">
+            </div>
+            <div id="imagewala"></div>
+
+            <div class="form-group">
+                <label for="exampleFormControlTextarea1">Example textarea</label>
+                <textarea name='text' style='margin: 0px; width: 70%; height: 93px;'></textarea>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Upload">
+            </div>
+        </form>
+    </div>
+</body>
+<script>
+    function handleFileUpload(event) {
+        const img = document.createElement("img");
+        img.id = "uploaded-image";
+        document.getElementById("imagewala").appendChild(img);
+
+        const uploadedImage = document.getElementById('uploaded-image');
+        const file = event.target.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                uploadedImage.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        } else {
+            uploadedImage.src = "";
+        }
+    }
+
+
+    document.getElementById('photo').addEventListener('change', handleFileUpload);
+</script>
+
+
+{%endblock%}

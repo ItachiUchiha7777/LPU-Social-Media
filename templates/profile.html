@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+<main class="py-4">
+    <section class="profile">
+        <div style="padding:10px;padding-left:50px" class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-md-3">
+                    <img src="{{ url_for('static', filename='profiles/'+profile[0][2]  ) }}" alt="Profile Picture"
+                        class="img-fluid rounded-circle">
+                </div>
+                <div class="col-md-9">
+                    <h2 class="mb-3">{{ profile[0][0]}}</h2>
+
+                    <p class="mb-4">{{profile[0][3].title()}}</p>
+                    <button class="btn btn-primary">Edit Profile</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section style="padding:50PX" class="posts mt-8">
+        <div class="container-fluid">
+
+            <div class="row">
+                {% for post in data %}
+                <!-- <div class="col-md-4">
+                    <div class="card mb-4">
+                        <img src="{{ url_for('static', filename='uploads/' + post[1]) }}" alt="Post Image"
+                            class="card-img-top">
+                        <div class="card-body">
+                            <p class="card-text">{{ post[2] }}</p>
+                        </div>
+                    </div>
+                </div> -->
+                <div style="padding:10px">
+                    <div class="card " style="width: 18rem;">
+                        <img src="{{ url_for('static', filename='uploads/' + post[1]) }}" class="card-img-top"
+                            alt="...">
+                        <div class="card-body">
+
+                            <p class="card-text">{{post[2]}}</p>
+
+                        </div>
+                    </div>
+                </div>
+
+
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+</main>
+
+
+{%endblock%}

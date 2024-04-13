@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    {%for data in data%}
+
+
+    <div class="post">
+        <div class="post-header">
+            <img class="avatar" src="https://via.placeholder.com/40" alt="Avatar">
+           <a href=""></a> <div class="post-title" >{{data[0]}}</div>
+        </div>
+        <div class="post-content">{{data[2]}}.</div>
+        <img class="post-image" src="{{ url_for('static', filename='uploads/' + data[1]) }}" alt=" Post Image">
+
+
+        <div class="post-actions">
+            <a href="#">Like</a>
+            <a href="#">Comment</a>
+            <a href="#">Share</a>
+        </div>
+    </div>
+
+    {%endfor%}
+    {% endblock %}
